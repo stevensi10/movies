@@ -10,8 +10,7 @@ var conn = mysql.createConnection({
     port: 3306,
     user : 'user',
     password : 'Steven123!!',
-    database : 'website',
-    socketPath: '/tmp/mysql.sock'
+    database : 'website'
 });
 
 // Serve static files from the React app
