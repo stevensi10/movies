@@ -23,7 +23,7 @@ app.get('/api/passwords', function(request, response){
     {
         console.log(results);
         if ( error ){
-            response.status(400).send('Error in database operation');
+            response.status(400).send('Error in database operation' + error);
         } else {
             response.json(results);
         }
