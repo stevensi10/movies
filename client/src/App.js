@@ -35,7 +35,7 @@ class App extends Component {
               */}
               {passwords.map((password, index) =>
                 <li key={index}>
-                  {password}
+                  {password.GENRE}
                 </li>
               )}
             </ul>

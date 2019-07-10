@@ -1,25 +1,33 @@
 const express = require('express');
 const path = require('path');
-const generatePassword = require('password-generator');
 
 const app = express();
+
+var mysql = require('mysql');
+
+var conn = mysql.createConnection({
+    host : 'localhost',
+    user : 'admin',
+    password : 'Steven123!!',
+    database : 'website'
+});
+
+conn.connect();
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, 'client/build')));
 
 // Put all API endpoints under '/api'
-app.get('/api/passwords', (req, res) => {
-  const count = 5;
-
-  // Generate some passwords
-  const passwords = Array.from(Array(count).keys()).map(i =>
-    generatePassword(12, false)
-  )
-
-  // Return them as json
-  res.json(passwords);
-
-  console.log(`Sent ${count} passwords`);
+app.get('/api/passwords', function(request, response){
+    conn.query('select GENRE from genres', function(error, results)
+    {
+        console.log(results);
+        if ( error ){
+            response.status(400).send('Error in database operation');
+        } else {
+            response.json(results);
+        }
+    });
 });
 
 // The "catchall" handler: for any request that doesn't
@@ -31,4 +39,4 @@ app.get('*', (req, res) => {
 const port = process.env.PORT || 5000;
 app.listen(port);
 
-console.log(`Password generator listening on ${port}`);
+console.log(`Server listening on ${port}`);
