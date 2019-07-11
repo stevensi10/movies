@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+var passwordHash = require('password-hash');
 
 const app = express();
 
@@ -18,7 +19,7 @@ app.use(express.static(path.join(__dirname, 'client/build')));
 
 // Put all API endpoints under '/api'
 app.get('/api/genres', function(request, response){
-    conn.query('select GENRE from genres', function(error, results)
+    conn.query('select ID,GENRE from genres', function(error, results)
     {
         if ( error ){
             response.status(400).send('Error in database operation' + error);
@@ -46,6 +47,7 @@ app.get('/api/users-lists', function(request, response){
             response.status(400).send('Error in database operation' + error);
         } else {
             response.json(results);
+            console.log(results);
         }
     });
 });
@@ -73,7 +75,7 @@ app.get('/api/seen', function(request, response){
 });
 
 app.get('/api/lists', function(request, response){
-    conn.query('SELECT l.* FROM lists l WHERE l.GENRE_ID='+request.query.id+' ORDER BY CREATION_DATE DESC', function(error, results)
+    conn.query('SELECT l.*,(SELECT TMDB_ID FROM lists_content WHERE LIST_ID=l.ID ORDER BY RAND() LIMIT 1) AS FIRST_ID FROM lists l WHERE l.GENRE_ID='+request.query.id+' ORDER BY CREATION_DATE DESC', function(error, results)
     {
         if ( error ){
             response.status(400).send('Error in database operation' + error);
@@ -106,7 +108,7 @@ app.get('/api/lists-genres', function(request, response){
 });
 
 app.get('/api/movie-rating', function(request, response){
-    conn.query('SELECT RATING FROM seen WHERE USER_ID='+request.query.userID+ 'AND IMDB_ID='+request.query.imdbID, function(error, results)
+    conn.query("SELECT RATING FROM seen WHERE USER_ID="+request.query.userID+" AND IMDB_ID='"+request.query.imdbID+"'", function(error, results)
     {
         console.log(results);
         if ( error ){
@@ -127,6 +129,109 @@ app.get('/api/movie-watchlist', function(request, response){
         }
     });
 });
+
+app.get('/api/create-user', function(request, response){
+    var hashedPassword = passwordHash.generate(request.query.password);
+    var creationDate = getCurrentDate();
+    var name = request.query.firstName + ' ' + request.query.lastName;
+    conn.query("INSERT INTO users(FIRST_NAME,LAST_NAME,NAME,EMAIL,PASSWORD,CREATION_DATE) VALUES('"+request.query.firstName+"','"+request.query.lastName+"','"+name+"','"+request.query.email+"','"+hashedPassword+"','"+creationDate+"')", function(error, results)
+    {
+        console.log(results);
+        if ( error ){
+            response.status(400).send('Error in database operation' + error);
+        } else {
+            response.json(results);
+        }
+    });
+});
+
+app.get('/api/login', function(request, response){
+    conn.query("SELECT * FROM USERS WHERE EMAIL='"+request.query.email+"'", function(error, results)
+    {
+        if ( error ){
+            response.status(400).send('Error in database operation' + error);
+        } else 
+        {
+            if(passwordHash.verify(request.query.password,results[0].PASSWORD))
+            {
+                response.json(results[0]);
+            }
+            else
+                response.status(400).send('false');
+        }
+    });
+});
+
+app.get('/api/movie-rating-set', function(request, response){
+    var lastUpdate = getCurrentDate();
+    conn.query("INSERT INTO seen(USER_ID,IMDB_ID,RATING,LAST_UPDATE) VALUES("+request.query.userID+",'"+request.query.imdbID+"',"+request.query.rating+",'"+lastUpdate+"') ON DUPLICATE KEY UPDATE RATING=VALUES(RATING),LAST_UPDATE=VALUES(LAST_UPDATE)", function(error, results)
+    {
+        if ( error ){
+            response.status(400).send('Error in database operation' + error);
+        } else {
+            response.json(results);
+            console.log(results);
+        }
+    });
+});
+
+app.get('/api/movie-watchlist-add', function(request, response){
+    var lastUpdate = getCurrentDate();
+    conn.query("INSERT INTO watchlist(USER_ID,TMDB_ID,LAST_UPDATE) VALUES("+request.query.userID+",'"+request.query.tmdbID+"','"+lastUpdate+"')", function(error, results)
+    {
+        console.log(results);
+        if ( error ){
+            response.status(400).send('Error in database operation' + error);
+        } else {
+            response.json(results);
+        }
+    });
+});
+
+app.get('/api/movie-watchlist-delete', function(request, response){
+    var lastUpdate = getCurrentDate();
+    conn.query("DELETE FROM watchlist WHERE USER_ID="+request.query.userID+" AND TMDB_ID='"+request.query.tmdbID+"'", function(error, results)
+    {
+        console.log(results);
+        if ( error ){
+            response.status(400).send('Error in database operation' + error);
+        } else {
+            response.json(results);
+        }
+    });
+});
+
+app.get('/api/movie-list-add', function(request, response){
+    var lastUpdate = getCurrentDate();
+    var query = conn.query("INSERT INTO lists_content(LIST_ID,TMDB_ID,TITLE,RELEASE_DATE,DATE_ADDED) VALUES("+request.query.listID+",'"+request.query.tmdbID+"','"+request.query.title+"','"+request.query.release_date+"','"+lastUpdate+"')", function(error, results)
+    {
+        if ( error ){
+            response.status(400).send('Error in database operation' + error);
+        } else {
+            response.json(results);
+        }
+    });
+});
+
+app.get('/api/list-create', function(request, response){
+    var lastUpdate = getCurrentDate();
+    var query = conn.query("INSERT INTO lists(USER_ID,GENRE_ID,NAME,CREATION_DATE,LAST_UPDATE) VALUES("+request.query.userID+",'"+request.query.genreID+"','"+request.query.name+"','"+lastUpdate+"','"+lastUpdate+"')", function(error, results)
+    {
+        if ( error ){
+            response.status(400).send('Error in database operation' + error);
+        } else {
+            response.json(results);
+        }
+    });
+});
+
+function getCurrentDate()
+{
+    var d = new Date();
+    d = new Date(d.getTime() - 3000000);
+    var date_format_str = d.getFullYear().toString()+"-"+((d.getMonth()+1).toString().length==2?(d.getMonth()+1).toString():"0"+(d.getMonth()+1).toString())+"-"+(d.getDate().toString().length==2?d.getDate().toString():"0"+d.getDate().toString())+" "+(d.getHours().toString().length==2?d.getHours().toString():"0"+d.getHours().toString())+":"+((parseInt(d.getMinutes()/5)*5).toString().length==2?(parseInt(d.getMinutes()/5)*5).toString():"0"+(parseInt(d.getMinutes()/5)*5).toString())+":00";
+    return date_format_str;
+}
 
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.

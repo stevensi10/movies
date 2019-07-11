@@ -10,30 +10,21 @@ class Login extends React.Component {
         var email = $("#inputEmail").val();
         var password = $("#inputPassword").val();
 
-        var self = this;
-        var url = "functions.php";
-        $.ajax({
-            url: url
-        ,   type: 'GET'
-        ,   contentType: 'application/json'
-        ,   data: {'func': 'login', 'email': email, 'password' : password}
-        ,   success: function (data) {
-                if(data == "[]")
+        fetch('/api/login?email='+email+'&password='+password)
+        .then(res => res.json())
+        .then(
+            userArray => 
+            {
+                if(userArray == "false")
                 {
                     $('#message').html('Login and password does not match. Please try again').css('color', 'red');
                 }
                 else{
-                    var userArray = JSON.parse(data);
-                    self.props.onUpdate(userArray);
-                    self.props.history.push('/browse');
+                    this.props.onUpdate(userArray);
+                    this.props.history.push('/browse');
                 }
-            },
-            error: function(xhr, ajaxOptions, thrownError){
-                console.log(xhr.responseText);
-                alert("error");
-            },
-            timeout: 5000
-        });
+            }
+        );
     }
 
     render(){
@@ -55,7 +46,7 @@ class Login extends React.Component {
                         </div>
                         <div class="form-group required">
                             <label class="control-label" for="inputPassword">Password</label>
-                            <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required="required" value="stevensi10"
+                            <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required="required" value="Steven123"
                             onKeyUp = {this.handleChange}></input>
                         </div>
                         <div class="col-md-12">

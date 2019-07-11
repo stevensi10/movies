@@ -72,23 +72,15 @@ class AddList extends React.Component {
   {
       var listID = $("#inputList").val();
       var list = $("#inputList option:selected").text();
-      var self = this;
-      var url = "functions.php";
 
-          $.ajax({
-              url: url
-          ,   type: 'GET'
-          ,   contentType: 'multipart/form-data'
-          ,   data: {'func': 'addToList', 'listID': listID, 'tmdbID': self.props.tmdbID, 'title': self.props.title, 'release_date': self.props.release_date}
-          ,   success: function (data) {
-                self.props.onAdd(list);
-              },
-              error: function(xhr, ajaxOptions, thrownError){
-                  console.log(xhr.responseText);
-                  //alert("error");
-              },
-              timeout: 5000
-      });
+      fetch('/api/movie-list-add?listID='+listID+'&tmdbID='+this.props.tmdbID+'&title='+this.props.title+'&release_date='+this.props.release_date)
+        .then(res => res.json())
+        .then(
+            data => 
+            {
+              this.props.onAdd(list);
+            }
+        );
   }
 
   render() {
@@ -404,24 +396,15 @@ class Movie extends React.Component {
     {
         var userID = localStorage.getItem("userID");
         var tmdbID = this.props.movieID;
-        var self = this;
-        var url = "functions.php";
-
-            $.ajax({
-                url: url
-            ,   type: 'GET'
-            ,   contentType: 'multipart/form-data'
-            ,   data: {'func': 'addToWatchlist', 'userID': userID, 'tmdbID': tmdbID}
-            ,   success: function (data) {
-                  self.setState({watchlist: 1});
-                  self.props.watchlistChange();
-                },
-                error: function(xhr, ajaxOptions, thrownError){
-                    console.log(xhr.responseText);
-                    //alert("error");
-                },
-                timeout: 5000
-        });
+        fetch('/api/movie-watchlist-add?userID='+userID+'&tmdbID='+tmdbID)
+        .then(res => res.json())
+        .then(
+            data => 
+            {
+              this.setState({watchlist: 1});
+              this.props.watchlistChange();
+            }
+        );
     }
 
     getRating()
@@ -433,9 +416,8 @@ class Movie extends React.Component {
         .then(
             data => 
             {
-              console.log(data);
-              if(data !== "undefined")
-                this.setState({data: data[0].RATING, seen: 1});
+              if(typeof data[0] !== "undefined")
+                this.setState({rating: data[0].RATING, seen: 1});
             }
         );
     }
@@ -460,24 +442,15 @@ class Movie extends React.Component {
     {
         var userID = localStorage.getItem("userID");
         var tmdbID = this.props.movieID;
-        var self = this;
-        var url = "functions.php";
-
-            $.ajax({
-                url: url
-            ,   type: 'GET'
-            ,   contentType: 'multipart/form-data'
-            ,   data: {'func': 'removeWatchlist', 'userID': userID, 'tmdbID': tmdbID}
-            ,   success: function (data) {
-                  self.setState({watchlist: 0});
-                  self.props.watchlistChange();
-                },
-                error: function(xhr, ajaxOptions, thrownError){
-                    console.log(xhr.responseText);
-                    //alert("error");
-                },
-                timeout: 5000
-        });
+        fetch('/api/movie-watchlist-delete?userID='+userID+'&tmdbID='+tmdbID)
+        .then(res => res.json())
+        .then(
+            data => 
+            {
+              this.setState({watchlist: 0});
+              this.props.watchlistChange();
+            }
+        );
     }
 
     setRating(event, starRating)
@@ -485,26 +458,14 @@ class Movie extends React.Component {
         var nextValue = starRating.rating;
         var userID = localStorage.getItem("userID");
         var imdbID = this.state.imdb_id;
-        var self = this;
-        var url = "functions.php";
-
-            $.ajax({
-                url: url
-            ,   type: 'GET'
-            ,   contentType: 'multipart/form-data'
-            ,   data: {'func': 'setRating', 'userID': userID, 'imdbID': imdbID, 'value': nextValue}
-            ,   success: function (data) {
-                  if(data != "")
-                  {
-                    self.setState({rating: data, seen: 1});
-                  }
-                },
-                error: function(xhr, ajaxOptions, thrownError){
-                    console.log(xhr.responseText);
-                    //alert("error");
-                },
-                timeout: 5000
-        });
+        fetch('/api/movie-rating-set?userID='+userID+'&imdbID='+imdbID+'&rating='+nextValue)
+        .then(res => res.json())
+        .then(
+            data => 
+            {
+              this.setState({seen: 1, rating: nextValue});
+            }
+        );
     }
       
   
@@ -615,7 +576,7 @@ class Movie extends React.Component {
               </Rating>
             </div>
             <br></br>
-            <img className="vw-25" style={{'border': '1.5px solid black', visibility: 'hidden'}} src={this.state.poster_path}
+            <img className="vw-25" style={{'border': '1.5px solid black', visibility: 'visible'}} src={this.state.poster_path}
             data-featherlight={overview}
             />
             <AddList

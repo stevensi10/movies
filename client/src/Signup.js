@@ -15,21 +15,14 @@ class Signup extends React.Component {
 
         if(password == password2)
         {
-            var self = this;
-            var url = "functions.php";
-            $.ajax({
-                url: url
-            ,   type: 'GET'
-            ,   contentType: 'application/json'
-            ,   data: {'func': 'createUser','firstName': firstName, 'lastName': lastName, 'email': email, 'password' : password}
-            ,   success: function (data) {
-                $('#successMessage').html('Account created successfully').css('color', 'green');
-                },
-                error: function(xhr, ajaxOptions, thrownError){
-                    alert("error");
-                },
-                timeout: 5000
-            });
+            fetch('/api/create-user?firstName='+firstName+'&lastName='+lastName+'&email='+email+'&password='+password)
+            .then(res => res.json())
+            .then(
+                data => 
+                {
+                    $('#successMessage').html('Account created successfully').css('color', 'green');
+                }
+            );
         }
     }
 

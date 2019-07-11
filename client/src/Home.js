@@ -34,23 +34,15 @@ class FormListCreation extends React.Component {
         var title = $("#inputTitle").val();
         var genreID = $("#inputGenre").val();
         var userID = localStorage.getItem( 'userID' );
-        var self = this;
-        var url = "functions.php";
 
-            $.ajax({
-                url: url
-            ,   type: 'GET'
-            ,   contentType: 'multipart/form-data'
-            ,   data: {'func': 'createList', 'genreID': genreID, 'name': title, 'userID' : userID}
-            ,   success: function (data) {
-                    self.props.onAdd(title);
-                },
-                error: function(xhr, ajaxOptions, thrownError){
-                    console.log(xhr.responseText);
-                    alert("error");
-                },
-                timeout: 5000
-        });
+        fetch('/api/list-create?genreID='+genreID+'&userID='+userID+'&name='+title)
+        .then(res => res.json())
+        .then(
+            data => 
+            {
+            this.props.onAdd(title);
+            }
+        );
     }
 
     render() {
@@ -193,7 +185,7 @@ class ListCard extends React.Component {
     fetchApi(url) {
         fetch(url).then((res) => res.json()).then((data) => 
         {
-            var poster_path = 'http://image.tmdb.org/t/p/originalAA' + data.poster_path;
+            var poster_path = 'http://image.tmdb.org/t/p/original' + data.poster_path;
             this.setState({poster_path: poster_path});
         })
       }
