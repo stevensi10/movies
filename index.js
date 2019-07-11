@@ -18,7 +18,6 @@ app.use(express.static(path.join(__dirname, 'client/build')));
 
 // Put all API endpoints under '/api'
 app.get('/api/passwords', function(request, response){
-    conn.connect();
     conn.query('select GENRE from genres', function(error, results)
     {
         console.log(results);
@@ -28,7 +27,6 @@ app.get('/api/passwords', function(request, response){
             response.json(results);
         }
     });
-    conn.end();
 });
 
 // The "catchall" handler: for any request that doesn't
