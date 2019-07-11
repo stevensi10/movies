@@ -1,0 +1,39 @@
+#genres-list > li {
+    margin-right: 0.3em;
+    color: blue;
+    user-select: none;
+    cursor: pointer;
+}
+
+#page-numbers {
+    justify-content: center;
+    display: flex;
+}
+
+.input-group-addon {
+    border-left-width: 0;
+    border-right-width: 0;
+}
+
+.input-group-addon:first-child {
+    border-left-width: 1px;
+}
+
+.input-group-addon:last-child {
+    border-right-width: 1px;
+}
+
+.form-group.required .control-label:after {
+    content:"*";
+    color:red;
+  }
+
+.cover {
+    object-fit: cover;
+    height: 10vw;
+    object-position: 0 0;
+}
+
+.carousel-control-prev, .carousel-control-next {
+    width: 5vh;
+}
