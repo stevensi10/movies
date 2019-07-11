@@ -6,11 +6,11 @@ const app = express();
 var mysql = require('mysql');
 
 var conn = mysql.createConnection({
-    host : '127.0.0.1',
+    host : 'us-cdbr-iron-east-02.cleardb.net',
     port: 3306,
-    user : 'user',
-    password : 'Steven123!!',
-    database : 'website'
+    user : 'b6733d71133f61',
+    password : 'aa2f63c8',
+    database : 'heroku_65b6bfb2048a755'
 });
 
 // Serve static files from the React app
