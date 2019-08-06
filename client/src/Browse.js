@@ -277,6 +277,16 @@ class Browse extends React.Component {
     super(props);
     this.getSeen();
     this.getGenres();
+
+    var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    var perRow = 6;
+    if(w < 576)
+      perRow = 2;
+    else if(w < 768)
+      perRow = 3;
+    else if(w < 992)
+      perRow = 4;
+
     this.state = {
       title: null, 
       results: [], 
@@ -291,7 +301,8 @@ class Browse extends React.Component {
       maxYear: null,
       seenArray: [],
       currentDataLoaded: 0,
-      searchType: null
+      searchType: null,
+      perRow: perRow
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -575,13 +586,29 @@ class Browse extends React.Component {
     });
 
     const moviesList = this.state.results.map((array, index) => {
-      if(index < 12)
+      if(index < this.state.perPage)
       {
-        return (
-          <div className = "col-6 col-sm-3 col-md-2 col-lg-2">
-            <Movie seenArray = {this.state.seenArray} movieID = {this.state.results[index]} watchlistChange = {this.watchlistChange}/>
-          </div>
-        );
+        if((index % this.state.perRow) == 0)
+        {
+          return (
+            <div className = "col-6 col-sm-3 col-md-2 col-lg-2">
+              <div>
+                <Movie seenArray = {this.state.seenArray} movieID = {this.state.results[index]} watchlistChange = {this.watchlistChange}/>
+              </div>
+              <hr></hr>
+            </div>
+          );
+        }
+        else
+        {
+          return (
+            <div className = "col-6 col-sm-3 col-md-2 col-lg-2">
+              <div>
+                <Movie seenArray = {this.state.seenArray} movieID = {this.state.results[index]} watchlistChange = {this.watchlistChange}/>
+              </div>
+            </div>
+          );
+        }
       }
     });
     return (
