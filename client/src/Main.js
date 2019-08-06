@@ -132,7 +132,7 @@ class Main extends Component {
       <HashRouter>
         <div>
           <div>
-            <nav id="main-navbar" class="navbar navbar-expand-sm navbar-light bg-light static-top">
+            <nav id="main-navbar" class="navbar navbar-expand navbar-light bg-light static-top">
               <ul class="navbar-nav mr-auto">
               <Tooltip title="Home">
                 <li class="nav-item">
