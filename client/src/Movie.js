@@ -39,7 +39,7 @@ class Row extends React.Component {
         });
       return (
           <div>
-              <div className="row" style={{'marginLeft': '5px'}}>
+              <div className="row" style={{"margin-left": "1%"}}>
                   {renderMovies}
               </div>
               <hr></hr>
@@ -314,7 +314,7 @@ class Movie extends React.Component {
         this.setState({
           original_title: data.title,
           release_date: release_date,
-          poster_path: 'http://image.tmdb.org/t/p/w185' + data.poster_path,
+          poster_path: 'http://image.tmdb.org/t/p/w154' + data.poster_path,
           genres: genres,
           imdb_link: 'https://www.imdb.com/title/' + data.imdb_id,
           imdb_id: data.imdb_id,
@@ -490,11 +490,9 @@ class Movie extends React.Component {
       if(this.props.movieID != null)
         return (
           <div>
-            <div className="vh-5" style={{display:"block"}}>
+            <div className="" style={{display:"block", height: '175px'}}>
               <h5 style={{'color': colorSeen}}>{this.state.original_title} ({this.state.release_date})
               </h5>
-            </div>
-            <div className="vh-20" style={{display:"block"}}>
               <div>
                 {this.state.videoLink != '' ?
                 <Tooltip title="Watch trailer">
@@ -575,10 +573,12 @@ class Movie extends React.Component {
               >
               </Rating>
             </div>
-            <br></br>
-            <img className="vw-25" style={{'border': '1.5px solid black', visibility: 'visible'}} src={this.state.poster_path}
+            <br></br><br></br>
+            <div>
+              <img style={{'border': '1.5px solid black', visibility: 'visible', 'object-fit': 'cover',height: '90%'}} src={this.state.poster_path}
             data-featherlight={overview}
             />
+            </div>
             <AddList
               show={this.state.modalShow}
               tmdbID = {this.props.movieID}

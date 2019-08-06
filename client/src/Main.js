@@ -42,7 +42,6 @@ class Main extends Component {
     this.notificationDOMRef = React.createRef();
     this.getMovies = this.getMovies.bind(this);
     this.getMovies();
-
   }
 
   addNotification(type) {
@@ -133,7 +132,7 @@ class Main extends Component {
       <HashRouter>
         <div>
           <div>
-            <nav class="navbar navbar-expand-sm navbar-light bg-light fixed-top">
+            <nav id="main-navbar" class="navbar navbar-expand-sm navbar-light bg-light static-top">
               <ul class="navbar-nav mr-auto">
               <Tooltip title="Home">
                 <li class="nav-item">

@@ -6,9 +6,17 @@ import Movie, {Row} from "./Movie";
 class WatchList extends React.Component {
     constructor(props) {
       super(props);
+      var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+      var perRow = 6;
+      if(w < 576)
+        perRow = 2;
+      else if(w < 768)
+        perRow = 3;
+      else if(w < 992)
+        perRow = 4;
       this.state = {
           listArray: [],
-          perRow: 6
+          perRow: perRow
         };
       this.getMovies = this.getMovies.bind(this);
       this.getMovies();

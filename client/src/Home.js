@@ -106,11 +106,20 @@ class ControlledCarousel extends React.Component {
   
       this.handleSelect = this.handleSelect.bind(this);
       this.listClick = this.listClick.bind(this);
+
+      var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+      var perRow = 6;
+      if(w < 576)
+        perRow = 1;
+      else if(w < 768)
+        perRow = 2;
+      else if(w < 992)
+        perRow = 3;
   
       this.state = {
         index: 0,
         direction: null,
-        perRow: 6
+        perRow: perRow
       };
 
       this.setState({listArray: this.props.listArray});
@@ -199,7 +208,7 @@ class ListCard extends React.Component {
     render() {
         return(
             <a href="" onClick = {this.listClick} id={this.state.id}>
-                <div className="card" style={{"width": "100%"}}>
+                <div className="card" style={{"width": "90%", "height": "30vh"}}>
                     <img className="card-img-top cover" src={this.state.poster_path} alt="Card image cap"></img>
                         <div className="card-body">
                             <h5 className="card-title">{this.state.name}</h5>
@@ -227,7 +236,7 @@ class ListRow extends React.Component {
             if(index >= lowResult && index <= topResult)
             {
                 return (
-                        <div className = "col-md-2">
+                        <div className = "col-12 col-sm-12 col-md-2 col-lg-2">
                             <ListCard
                             listID={array.ID}
                             name={array.NAME}
@@ -240,7 +249,7 @@ class ListRow extends React.Component {
           });
         return (
             <div>
-                <div className="row" style={{'marginLeft': '5px'}}>
+                <div className="row" style={{'marginLeft': '1%'}}>
                     {renderLists}
                 </div>
                 <hr></hr>
