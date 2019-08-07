@@ -415,6 +415,7 @@ class Browse extends React.Component {
   }
 
   handleClick(event) {    
+    window.scrollTo(0, 0);
     this.setState({currentPage: Number(event.target.id)},
     () => {this.afterSetState();}
     );
@@ -661,6 +662,7 @@ class Browse extends React.Component {
               {renderPageNumbers}
             </ul>
           </nav>
+          <br></br>
       </div>
     );
   }

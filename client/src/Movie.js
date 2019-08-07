@@ -181,13 +181,16 @@ class Similars extends React.Component {
   render() {
       const renderData = this.state.similars.map((key, index) => {
           return (
-            <div className = "col-md-6">
-              <Movie
-              movieID={key}
-              name={key}
-              watchlistChange = {this.handleRemove}
-              />
-          </div>
+            <div>
+              <div className = "col-12 col-sm-12 col-md-4 col-lg-2">
+                <Movie
+                movieID={key}
+                name={key}
+                watchlistChange = {this.handleRemove}
+                />
+              </div>
+              <hr></hr>
+            </div>
           );
       });
       return(
@@ -267,6 +270,9 @@ class Movie extends React.Component {
             genres = genres + genresArray[i].name + ', ';
           }
         }
+        if(genres.slice(-1) == ' ')
+          genres = genres.substring(0, genres.length-2);
+
         var videoLink = '';
         for(var j = 0; j < videosArray.length; j++)
         {
@@ -491,9 +497,9 @@ class Movie extends React.Component {
         return (
           <div>
             <div className="" style={{display:"block", height: '175px'}}>
+              <div>
               <h5 style={{'color': colorSeen}}>{this.state.original_title} ({this.state.release_date})
               </h5>
-              <div>
                 {this.state.videoLink != '' ?
                 <Tooltip title="Watch trailer">
                   <a
@@ -541,7 +547,7 @@ class Movie extends React.Component {
                 </a>
               </Tooltip>
               </div>
-                <span>Genres : {this.state.genres}</span>
+                {this.state.genres}
               <br></br>
                 {renderCountries}
               <br></br>

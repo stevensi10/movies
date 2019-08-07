@@ -23,6 +23,8 @@ import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 import Tooltip from '@material-ui/core/Tooltip';
 import { Label} from 'semantic-ui-react'
+import ScrollUpButton from "react-scroll-up-button"; //Add this line Here
+
 
 class Main extends Component {
   constructor(props)
@@ -235,6 +237,7 @@ class Main extends Component {
               )}/>
           </div>
           <ReactNotification ref={this.notificationDOMRef} />
+          <ScrollUpButton />
       </div>
       </HashRouter>
     );
